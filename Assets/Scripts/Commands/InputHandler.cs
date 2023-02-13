@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//inputhandler ended up not being used, but I'll leave it in the files to show we tried.
-//we chose not to use it because we only use the mouse, and assigning commands over and over on one button while the player is playing seemed inefficient
+//inputhandler ended up not being used, but I'll leave it in the files to show I tried.
+//I chose not to use it because I only use the mouse, and assigning commands over and over on one button while the player is playing seemed inefficient
 public class InputHandler
 {
     private List<KeyCommand> keyCommands = new List<KeyCommand>();
