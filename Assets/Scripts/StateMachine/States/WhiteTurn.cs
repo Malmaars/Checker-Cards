@@ -10,7 +10,6 @@ public class WhiteTurn : Turn
     public WhiteTurn() : base()
     {
         turnsPlaceableColor = PlaceableColor.White;
-        PotionManager.AddWallet(turnsPlaceableColor);
 
         //Transition to black's turn when you make a move
         transitions.Add(new StateTransition(typeof(BlackTurn), () => turnFinished == true));

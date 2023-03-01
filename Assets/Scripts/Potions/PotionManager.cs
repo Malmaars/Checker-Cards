@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 static class PotionManager
 {
@@ -11,11 +12,14 @@ static class PotionManager
     static System.Type[] possiblePotions = new System.Type[] {typeof(PotionFrog), typeof(PotionShield), typeof(PotionWings)};
     private static Dictionary<PlaceableColor, int> wallets;
 
+    private static Dictionary<PlaceableColor, GameObject> walletVisuals;
+
     public static Potion currentlySelectedPotion;
     public static void Initialize()
     {
         currentlyAvaiablePotions = new List<Potion>();
         wallets = new Dictionary<PlaceableColor, int>();
+        walletVisuals = new Dictionary<PlaceableColor, GameObject>();
     }
 
     public static void LogicUpdate()
@@ -32,6 +36,26 @@ static class PotionManager
         }
 
         wallets.Add(_color, 0);
+
+        //create a visual
+
+        GameObject temp = null;
+        Debug.Log(_color);
+        switch (_color)
+        {
+            case PlaceableColor.White:
+                temp = UnityEngine.Object.Instantiate(Resources.Load("Interface/Wallets/WhiteWallet") as GameObject);
+                break;
+
+            case PlaceableColor.Black:
+                temp = UnityEngine.Object.Instantiate(Resources.Load("Interface/Wallets/BlackWallet") as GameObject);
+                break;
+        }
+
+
+
+        walletVisuals.Add(_color, temp);
+        ArrangeWallets();
     }
 
     public static void ResetWallets()
@@ -39,6 +63,7 @@ static class PotionManager
         foreach(KeyValuePair<PlaceableColor, int> wallet in wallets)
         {
             wallets[wallet.Key] = 0;
+            UpdateWallet(wallet.Key, 0);
         }
     }
 
@@ -46,12 +71,13 @@ static class PotionManager
     public static void UpdateWallet(PlaceableColor _color, int _addition)
     {
         wallets[_color] += _addition;
+
+        walletVisuals[_color].GetComponentInChildren<TextMeshPro>().text = wallets[_color].ToString();
     }
 
     //check the value of a wallet
     public static int CheckWallet(PlaceableColor _color)
     {
-        Debug.Log(wallets[_color]);
         return wallets[_color];
     }
 
@@ -67,6 +93,18 @@ static class PotionManager
         {
             Vector2 newPosition = new Vector2(4, currentlyAvaiablePotions.Count - i * currentlyAvaiablePotions.Count);
             currentlyAvaiablePotions[i].SetPosition(newPosition);
+        }
+    }
+
+    static void ArrangeWallets()
+    {
+        int index = 0;
+        Vector2 newPosition = Vector2.zero;
+        foreach (KeyValuePair<PlaceableColor, GameObject> keyValues in walletVisuals)
+        {
+            newPosition = new Vector2(walletVisuals.Count - index * walletVisuals.Count + 5, 4.4f);
+            walletVisuals[keyValues.Key].transform.position = newPosition;
+            index++;
         }
     }
 
@@ -118,7 +156,7 @@ static class PotionManager
         //check if the tile is viable for the current potion
         if (currentlySelectedPotion.AffectableTile(pos) && wallets[_colorUsingIt] >= 3)
         {
-            wallets[_colorUsingIt] -= 3;
+            UpdateWallet(_colorUsingIt, -3);
             //if it is viable, use its effect on the given tile
             currentlySelectedPotion.Effect(pos);
 
