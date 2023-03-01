@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     
     void Start()
     {
-        stateMachine = new GameStateMachine(typeof(WhiteTurn));
+        stateMachine = new GameStateMachine(typeof(StartState));
 
         StartGame();
     }
@@ -30,25 +30,6 @@ public class GameManager : MonoBehaviour
     void StartGame()
     {
 
-        PotionManager.Initialize();
-
-        for (int i = 0; i < 3; i++)
-        {
-            PotionManager.MakePotionAvailable(PotionManager.CreateRandomPotion());
-        }
-        PotionManager.ArrangePotions();
-        
-        GridSystem.SetGridSize(8,8);
-
-        //grid is at the center of the screen, so the start position will be taken from there
-        gridStartPosition = new Vector2(Camera.main.transform.position.x - GridSystem.xSize / 2 + 0.5f, Camera.main.transform.position.y - GridSystem.ySize / 2 + 0.5f);
-        
-        //add the given offset to the start position
-        gridStartPosition += gridOffset;
-
-        GridSystem.InitializeGrid(gridStartPosition);
-        GridSystem.AddBorderToBoard();
-        GridSystem.SpawnAllCheckers();
     }
 }
 

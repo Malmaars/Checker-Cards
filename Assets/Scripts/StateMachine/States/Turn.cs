@@ -9,17 +9,23 @@ public class Turn : Gamestate
     protected PlaceableColor turnsPlaceableColor;
     protected IPlaceable selectedPlaceable;
     protected bool turnFinished = false;
+    protected bool victoryBool = false;
     protected bool combo;
 
-    public Turn()
+    protected int currency;
+
+    public Turn() : base()
     {
-        transitions = new List<StateTransition>();
         //Transition to pause state when you press the escape button
         transitions.Add(new StateTransition(typeof(PauseState), () => Input.GetKeyDown(KeyCode.Escape)));
+
+        //transition to endstate when you win
+        transitions.Add(new StateTransition(typeof(EndState), () => victoryBool == true));
     }
     public override void Enter()
     {
         base.Enter();
+        victoryBool = false;
         turnFinished = false;
     }
 
@@ -27,10 +33,16 @@ public class Turn : Gamestate
     {
         base.LogicUpdate();
 
-        if (PotionManager.currentlySelectedPotion == null)
+        if (PotionManager.currentlySelectedPotion == null || (PotionManager.CheckWallet(turnsPlaceableColor) < 3))
             MovePieces();
+
+        //we check if the player can even pay for the potion. If they can't, no need to use it
         else
             UsePotion();
+
+        if (PotionManager.CheckWallet(turnsPlaceableColor) < 3)
+            PotionManager.DeselectPotion();
+
     }
 
     void MovePieces()
@@ -50,15 +62,17 @@ public class Turn : Gamestate
                         //keep the combo going if possible
                         if (GridSystem.AttackChecker(selectedPlaceable.myPos, clickedPos))
                         {
-                            GridSystem.ShowAllAttackOptionsForPlaceable(selectedPlaceable.myPos);
                             combo = GridSystem.CheckForPossibleAttacks(selectedPlaceable.myPos);
                             //if there are no more combo attacks, end turn
                             turnFinished = !combo;
                         }
                     }
+
+                    //keep showing the attack options even if the player clicks on something else. The only option is to continue the combo
+                    GridSystem.ShowAllAttackOptionsForPlaceable(selectedPlaceable.myPos);
                 }
 
-                else
+                else if(!combo)
                 {
                     //if you click on a tile that's not empty, attack if possible
                     if (clickedTile != null)
@@ -70,6 +84,14 @@ public class Turn : Gamestate
                             //we've succesfully attacked something, let's scan the area for a possible combo
                             combo = GridSystem.CheckForPossibleAttacks(selectedPlaceable.myPos);
                             turnFinished = !combo;
+                        }
+
+                        //if you click on another piece of your color, switch to that one
+                        if (clickedTile != null && clickedTile.color == turnsPlaceableColor)
+                        {
+                            selectedPlaceable = clickedTile;
+                            GridSystem.ShowAllAttackOptionsForPlaceable(clickedPos);
+                            GridSystem.ShowAllMovementOptionsForPlaceable(clickedPos);
                         }
                     }
                     //if you click on an empty tile, move if possible
@@ -107,8 +129,23 @@ public class Turn : Gamestate
 
         if (turnFinished)
         {
+            //check for victory
+            if (GridSystem.CheckForVictory(turnsPlaceableColor))
+            {
+                //the color won. Don't end the turn, but go to the end screen instead
+                Victory();
+                turnFinished = false;
+            }
+
             selectedPlaceable = null;
         }
+    }
+
+    void Victory()
+    {
+        //a player wins when the only pieces left on the board are of the player's color
+        GridSystem.SetWinner(turnsPlaceableColor);
+        victoryBool = true;
     }
 
     void UsePotion() 
@@ -117,7 +154,7 @@ public class Turn : Gamestate
         {
             GridPos clickedPos = GridSystem.ClickOnTiles();
 
-            if (!GridSystem.CheckIfGridposIsInsideGrid(clickedPos))
+            if (!GridSystem.CheckIfGridposIsInsideGrid(clickedPos) || Input.GetMouseButtonDown(1))
             {
                 //clickedPos is outside the grid
                 PotionManager.DeselectPotion();
@@ -127,7 +164,7 @@ public class Turn : Gamestate
             else
             {
                 //clickedPos is inside grid. perform check if the cell can be used, and use the potion effect if so.
-                PotionManager.UseEffect(clickedPos);
+                PotionManager.UseEffect(clickedPos, turnsPlaceableColor);
             }
         }
     }

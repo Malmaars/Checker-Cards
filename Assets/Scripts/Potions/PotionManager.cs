@@ -9,16 +9,50 @@ static class PotionManager
    
     static List<Potion> currentlyAvaiablePotions;
     static System.Type[] possiblePotions = new System.Type[] {typeof(PotionFrog), typeof(PotionShield), typeof(PotionWings)};
+    private static Dictionary<PlaceableColor, int> wallets;
 
     public static Potion currentlySelectedPotion;
     public static void Initialize()
     {
         currentlyAvaiablePotions = new List<Potion>();
+        wallets = new Dictionary<PlaceableColor, int>();
     }
 
     public static void LogicUpdate()
     {
         DoSomethingWithPotion();
+    }
+
+    public static void AddWallet(PlaceableColor _color)
+    {
+        if (wallets.ContainsKey(_color))
+        {
+            Debug.LogError("There already is a wallet with this color");
+            return;
+        }
+
+        wallets.Add(_color, 0);
+    }
+
+    public static void ResetWallets()
+    {
+        foreach(KeyValuePair<PlaceableColor, int> wallet in wallets)
+        {
+            wallets[wallet.Key] = 0;
+        }
+    }
+
+    //add or subtract from a wallet
+    public static void UpdateWallet(PlaceableColor _color, int _addition)
+    {
+        wallets[_color] += _addition;
+    }
+
+    //check the value of a wallet
+    public static int CheckWallet(PlaceableColor _color)
+    {
+        Debug.Log(wallets[_color]);
+        return wallets[_color];
     }
 
     public static void MakePotionAvailable(Potion newPotion)
@@ -79,13 +113,20 @@ static class PotionManager
         return null;
     }
 
-    public static void UseEffect(GridPos pos)
+    public static void UseEffect(GridPos pos, PlaceableColor _colorUsingIt)
     {
         //check if the tile is viable for the current potion
-        if (currentlySelectedPotion.AffectableTile(pos))
+        if (currentlySelectedPotion.AffectableTile(pos) && wallets[_colorUsingIt] >= 3)
         {
+            wallets[_colorUsingIt] -= 3;
             //if it is viable, use its effect on the given tile
             currentlySelectedPotion.Effect(pos);
+
+            currentlySelectedPotion.RemovePotion();
+            currentlyAvaiablePotions.Remove(currentlySelectedPotion);
+            MakePotionAvailable(CreateRandomPotion());
+            ArrangePotions();
+
             DeselectPotion();
         }
 

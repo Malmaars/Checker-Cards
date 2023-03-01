@@ -13,6 +13,9 @@ static class GridSystem
     public static int xSize { get; private set; }
     public static int ySize { get; private set; }
 
+    //this will show the winning color type once one wins
+    public static PlaceableColor winner { get; private set; }
+
     //an objectpool of checkers, so we won't be garbage collecting too much
     //the pool is shared for white and black pieces, and can be changed when you pull one out of the pool.
     //It's better than having more pools for each color, especially with the option of adding more colors in the future
@@ -217,6 +220,7 @@ static class GridSystem
                 if (attacks[i].x == offset.x && attacks[i].y == offset.y && checkerGrid[_oldPos.x, _oldPos.y].color != checkerGrid[_newPos.x, _newPos.y].color
                     && checkerGrid[_oldPos.x + attacks[i].x + attacks[i].x, _oldPos.y + attacks[i].y + attacks[i].y] == null)
                 {
+                    PotionManager.UpdateWallet(checkerGrid[_newPos.x, _newPos.y].color, 1);
                     RemoveIplacable(_newPos);
 
                     int xDirection = _newPos.x - _oldPos.x;
@@ -369,6 +373,43 @@ static class GridSystem
     public static void SpawnChecker(GridPos _initPos, PlaceableType _placeableType, PlaceableColor _color)
     {
         AddChecker(_placeableType, _initPos, _color);
+    }
+
+    //function to remove all remaining checkers from the board
+    public static void ClearAllCheckers()
+    {
+        for(int i = 0; i < checkerGrid.GetLength(0); i++)
+        {
+            for (int k = 0; k < checkerGrid.GetLength(1); k++)
+            {
+                if(checkerGrid[i,k] != null)
+                {
+                    checkerGrid[i, k].ResetChecker();
+                    checkerPool.ReturnObjectToPool(checkerGrid[i, k]);
+                    checkerGrid[i, k] = null;
+                }
+            }
+        }
+    }
+
+    public static bool CheckForVictory(PlaceableColor _color)
+    {
+        foreach(Checker checker in checkerGrid)
+        {
+            if(checker != null && checker.color != _color)
+            {
+                //the requested color isn't the only one on the board, victory hasn't been acquired yet
+                return false;
+            }
+        }
+
+        //all the checkers are of the requested color, it won
+        return true;
+    }
+
+    public static void SetWinner(PlaceableColor _color)
+    {
+        winner = _color;
     }
 
     //fetch what the checker is on a given location

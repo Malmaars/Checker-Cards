@@ -25,4 +25,10 @@ public class Potion : IPotion
     //since all potions do something when you click on a specific tile, we can check the tile on the gridsystem, and an effect can take place
     public virtual void Effect(GridPos _effectTile) { }
     public virtual bool AffectableTile(GridPos _tile) { return false; }
+
+    //rather inefficient, but I've put in a lot of time, and am way over the time I should put into this, so this'll have to do
+    public virtual void RemovePotion()
+    {
+        visual.SetActive(false);
+    }
 }

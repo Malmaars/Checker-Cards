@@ -8,10 +8,8 @@ public class PauseState : Gamestate
 
     GameObject PauseVisual, visualPrefab;
 
-    public PauseState()
+    public PauseState() : base()
     {
-        transitions = new List<StateTransition>();
-
         visualPrefab = Resources.Load("Interface/PausedText") as GameObject;
         PauseVisual = Object.Instantiate(visualPrefab);
         PauseVisual.SetActive(false);
