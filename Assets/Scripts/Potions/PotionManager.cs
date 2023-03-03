@@ -31,7 +31,7 @@ static class PotionManager
     {
         if (wallets.ContainsKey(_color))
         {
-            Debug.LogError("There already is a wallet with this color");
+            Debug.LogWarning("There already is a wallet with this color");
             return;
         }
 
@@ -44,11 +44,13 @@ static class PotionManager
         switch (_color)
         {
             case PlaceableColor.White:
-                temp = UnityEngine.Object.Instantiate(Resources.Load("Interface/Wallets/WhiteWallet") as GameObject);
+                if (!walletVisuals.ContainsKey(PlaceableColor.White))
+                    temp = UnityEngine.Object.Instantiate(Resources.Load("Interface/Wallets/WhiteWallet") as GameObject);
                 break;
 
             case PlaceableColor.Black:
-                temp = UnityEngine.Object.Instantiate(Resources.Load("Interface/Wallets/BlackWallet") as GameObject);
+                if (!walletVisuals.ContainsKey(PlaceableColor.Black))
+                    temp = UnityEngine.Object.Instantiate(Resources.Load("Interface/Wallets/BlackWallet") as GameObject);
                 break;
         }
 
@@ -60,10 +62,17 @@ static class PotionManager
 
     public static void ResetWallets()
     {
-        foreach(KeyValuePair<PlaceableColor, int> wallet in wallets)
+        List<PlaceableColor> colorsInWallets = new List<PlaceableColor>();
+        foreach (KeyValuePair<PlaceableColor, int> wallet in wallets)
         {
-            wallets[wallet.Key] = 0;
-            UpdateWallet(wallet.Key, 0);
+            colorsInWallets.Add(wallet.Key);
+        }
+
+
+        foreach (PlaceableColor pColor in colorsInWallets)
+        {
+            wallets[pColor] = 0;
+            UpdateWallet(pColor, 0);
         }
     }
 
@@ -120,6 +129,16 @@ static class PotionManager
     public static void DeselectPotion()
     {
         currentlySelectedPotion = null;
+    }
+
+    public static void RemoveAllPotions()
+    {
+        foreach (Potion potion in currentlyAvaiablePotions)
+        {
+            potion.RemovePotion();
+        }
+
+        currentlyAvaiablePotions.Clear();
     }
 
     //check if player clicks on available potions

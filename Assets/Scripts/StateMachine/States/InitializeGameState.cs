@@ -18,7 +18,8 @@ public class InitializeGameState : Gamestate
     {
         base.Enter();
 
-        PotionManager.Initialize();
+        PotionManager.ResetWallets();
+        PotionManager.RemoveAllPotions();
 
         for (int i = 0; i < 3; i++)
         {

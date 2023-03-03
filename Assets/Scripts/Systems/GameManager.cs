@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         stateMachine = new GameStateMachine(typeof(StartState));
+        PotionManager.Initialize();
 
         StartGame();
     }
