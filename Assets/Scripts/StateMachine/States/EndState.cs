@@ -5,13 +5,13 @@ using TMPro;
 
 public class EndState : Gamestate
 {
-    GameObject EndVisual, visualPrefab;
+    GameObject endVisual, visualPrefab;
     //since this state will end the game, it won't need transitions to other states
 
     public EndState() : base()
     {
         visualPrefab = Resources.Load("Interface/EndText") as GameObject;
-        EndVisual = Object.Instantiate(visualPrefab);
+        endVisual = Object.Instantiate(visualPrefab);
         transitions.Add(new StateTransition(typeof(StartState), () => Input.GetMouseButtonDown(0) == true));
     }
 
@@ -25,15 +25,15 @@ public class EndState : Gamestate
         switch (GridSystem.winner)
         {
             case PlaceableColor.White:
-                EndVisual.GetComponent<TextMeshPro>().text = "White won!";
+                endVisual.GetComponent<TextMeshPro>().text = "White won!";
                 break;
 
             case PlaceableColor.Black:
-                EndVisual.GetComponent<TextMeshPro>().text = "Black won!";
+                endVisual.GetComponent<TextMeshPro>().text = "Black won!";
                 break;
         }
 
-        EndVisual.SetActive(true);
+        endVisual.SetActive(true);
         Time.timeScale = 0;
 
         //TODO: show visual of the game being paused
@@ -44,7 +44,7 @@ public class EndState : Gamestate
         Debug.Log("unending game..(?)");
         base.Exit();
         GridSystem.ClearAllCheckers();
-        EndVisual.SetActive(false);
+        endVisual.SetActive(false);
         Time.timeScale = 1;
     }
 }

@@ -7,14 +7,12 @@ using TMPro;
 static class PotionManager
 {
     //this class will manage all the potions. whether the player can buy them, and which ones are bought
-   
-    static List<Potion> currentlyAvaiablePotions;
-    static System.Type[] possiblePotions = new System.Type[] {typeof(PotionFrog), typeof(PotionShield), typeof(PotionWings)};
+    public static Potion currentlySelectedPotion;
+    private static List<Potion> currentlyAvaiablePotions;
+    private static System.Type[] possiblePotions = new System.Type[] {typeof(PotionFrog), typeof(PotionShield), typeof(PotionWings)};
     private static Dictionary<PlaceableColor, int> wallets;
-
     private static Dictionary<PlaceableColor, GameObject> walletVisuals;
 
-    public static Potion currentlySelectedPotion;
     public static void Initialize()
     {
         currentlyAvaiablePotions = new List<Potion>();
@@ -105,27 +103,6 @@ static class PotionManager
         }
     }
 
-    static void ArrangeWallets()
-    {
-        int index = 0;
-        Vector2 newPosition = Vector2.zero;
-        foreach (KeyValuePair<PlaceableColor, GameObject> keyValues in walletVisuals)
-        {
-            newPosition = new Vector2(walletVisuals.Count - index * walletVisuals.Count + 5, 4.4f);
-            walletVisuals[keyValues.Key].transform.position = newPosition;
-            index++;
-        }
-    }
-
-    static void DoSomethingWithPotion()
-    {
-        if(currentlySelectedPotion == null)
-        {
-            currentlySelectedPotion = CheckForClick();
-            return;
-        }
-    }
-
     public static void DeselectPotion()
     {
         currentlySelectedPotion = null;
@@ -141,34 +118,7 @@ static class PotionManager
         currentlyAvaiablePotions.Clear();
     }
 
-    //check if player clicks on available potions
-    static Potion CheckForClick()
-    {
-        if (!Input.GetMouseButtonDown(0))
-        {
-            //there has been no input, so it makes no sense to check whether the player has clicked something
-            return null;
-        }
 
-        //check if the mouse is in their range, and return potion when it is clicked 
-        foreach (Potion potion in currentlyAvaiablePotions)
-        {
-            //compare the position and radius of the potion with the position of the mouse
-
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            if(Vector2.Distance(mousePosition, potion.position) <= potion.radius)
-            {
-                //the player is over this potion while clicking, return it
-                Debug.Log(potion.GetType());
-                return potion;
-            }
-
-        }
-
-        //if nothing has been clicked, return null
-        return null;
-    }
 
     public static void UseEffect(GridPos pos, PlaceableColor _colorUsingIt)
     {
@@ -200,5 +150,55 @@ static class PotionManager
         int randomIndex = UnityEngine.Random.Range(0, possiblePotions.Length);
         return (Potion)Activator.CreateInstance(possiblePotions[randomIndex]);
         //create a random potion from the possible potions
+    }
+
+    private static void ArrangeWallets()
+    {
+        int index = 0;
+        Vector2 newPosition = Vector2.zero;
+        foreach (KeyValuePair<PlaceableColor, GameObject> keyValues in walletVisuals)
+        {
+            newPosition = new Vector2(walletVisuals.Count - index * walletVisuals.Count + 5, 4.4f);
+            walletVisuals[keyValues.Key].transform.position = newPosition;
+            index++;
+        }
+    }
+
+    private static void DoSomethingWithPotion()
+    {
+        if (currentlySelectedPotion == null)
+        {
+            currentlySelectedPotion = CheckForClick();
+            return;
+        }
+    }
+
+    //check if player clicks on available potions
+    private static Potion CheckForClick()
+    {
+        if (!Input.GetMouseButtonDown(0))
+        {
+            //there has been no input, so it makes no sense to check whether the player has clicked something
+            return null;
+        }
+
+        //check if the mouse is in their range, and return potion when it is clicked 
+        foreach (Potion potion in currentlyAvaiablePotions)
+        {
+            //compare the position and radius of the potion with the position of the mouse
+
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            if (Vector2.Distance(mousePosition, potion.position) <= potion.radius)
+            {
+                //the player is over this potion while clicking, return it
+                Debug.Log(potion.GetType());
+                return potion;
+            }
+
+        }
+
+        //if nothing has been clicked, return null
+        return null;
     }
 }

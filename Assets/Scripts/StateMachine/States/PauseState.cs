@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class PauseState : Gamestate
 {
-    System.Type previousState;
+    private System.Type previousState;
 
-    GameObject PauseVisual, visualPrefab;
+    private GameObject pauseVisual, visualPrefab;
 
     public PauseState() : base()
     {
         visualPrefab = Resources.Load("Interface/PausedText") as GameObject;
-        PauseVisual = Object.Instantiate(visualPrefab);
-        PauseVisual.SetActive(false);
+        pauseVisual = Object.Instantiate(visualPrefab);
+        pauseVisual.SetActive(false);
     }
 
     //This should be called whenever you switch to the pause state, the previous state will be put through, and recalled when you unpause
@@ -28,7 +28,7 @@ public class PauseState : Gamestate
     {
         base.Enter();
         Debug.Log("pausing game");
-        PauseVisual.SetActive(true);
+        pauseVisual.SetActive(true);
         Time.timeScale = 0;
 
         //TODO: show visual of the game being paused
@@ -38,7 +38,7 @@ public class PauseState : Gamestate
     {
         Debug.Log("unpausing game");
         base.Exit();
-        PauseVisual.SetActive(false);
+        pauseVisual.SetActive(false);
         Time.timeScale = 1;
     }
 }

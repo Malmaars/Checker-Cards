@@ -8,9 +8,7 @@ public abstract class Gamestate : IState
     {
         transitions = new List<StateTransition>();
     }
-    public bool active { get; set; }
-    public void OnEnableObject(){}
-    public void OnDisableObject(){}
+
     public List<StateTransition> transitions { get; protected set; }
 
     public virtual void Enter(){}

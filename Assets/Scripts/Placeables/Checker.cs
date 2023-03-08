@@ -2,26 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Enum for Placeable Types
-public enum PlaceableType
-{
-    Basic,
-    Frog,
-    Stone,
-    Fire,
-    Grapple,
-    Shield,
-    Winged
-}
-
-//Enum for Placeable Colors/sides
-public enum PlaceableColor
-{
-    Neutral,
-    White,
-    Black
-}
-
 public class Checker : IPlaceable
 {
     //if we wanna keep the checkers on one color,  we just have to check the sum of the gridPos (X + Y position)
@@ -36,6 +16,7 @@ public class Checker : IPlaceable
     
     //in game respresentation of the checker
     public GameObject body { get; set; }
+    public bool active { get; set; }
 
     private GridPos[] possibleMoves;
 
@@ -44,7 +25,6 @@ public class Checker : IPlaceable
     //determines which direction the checker moves to
     private GridPos direction;
 
-    public bool active { get; set; }
     public void OnEnableObject()
     {
         body?.SetActive(true);
@@ -178,6 +158,16 @@ public class Checker : IPlaceable
         ChangeSprite();
     }
 
+    //since a checker is a very varying placeable that can be a lot of types, it's nice to be able to reset it back to it's simplest form
+    public void ResetChecker()
+    {
+        //a basic piece
+        ChangeType(PlaceableType.Basic);
+
+        //with no association
+        ChangeColor(PlaceableColor.Neutral);
+    }
+
     //function to call whenever a change of sprite is needed
     private void ChangeSprite()
     {
@@ -246,13 +236,5 @@ public class Checker : IPlaceable
         body.GetComponent<SpriteRenderer>().sprite = newSprite;
     }
 
-    //since a checker is a very varying placeable that can be a lot of types, it's nice to be able to reset it back to it's simplest form
-    public void ResetChecker()
-    {
-        //a basic piece
-        ChangeType(PlaceableType.Basic);
 
-        //with no association
-        ChangeColor(PlaceableColor.Neutral);
-    }
 }

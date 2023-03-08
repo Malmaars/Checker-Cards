@@ -5,10 +5,7 @@ using UnityEngine;
 
 static class GridSystem
 {
-    //this determines how many rows of checkers each player gets at the start
-    static int rowsOfCheckers = 3;
 
-    static Vector2 gridStartPosition;
     //the size of the board, horizontally and vertically
     public static int xSize { get; private set; }
     public static int ySize { get; private set; }
@@ -32,11 +29,13 @@ static class GridSystem
     //An array of all the placeables on the board
     private static Checker[,] checkerGrid;
 
-    //Array for animations when selecting placeables
-    //private static SelectAnimation[,] selectAnimations;
-
     //array of the physical instances of the board tiles
     private static GameObject[,] tiles;
+
+    //this determines how many rows of checkers each player gets at the start
+    private static int rowsOfCheckers = 3;
+
+    private static Vector2 gridStartPosition;
 
     //Initializes the grid, by input size
     public static void SetGridSize(int _xSize, int _ySize)
@@ -430,35 +429,5 @@ static class GridSystem
     public static Vector2 FetchVector2FromGridpos(GridPos _gridPos)
     {
         return gridStartPosition + new Vector2(_gridPos.x, _gridPos.y);
-    }
-}
-
-//a struct for positions on the grid
-//it's nice because while Vector2 seems good, its variables are floats, and I want precise coordination, where ints are better
-//Also help code stay organizes
-public struct GridPos
-{
-    public int x;
-    public int y;
-
-    public GridPos(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public static GridPos operator +(GridPos lhs, GridPos rhs)
-    {
-        return new GridPos(lhs.x + rhs.x, lhs.y + rhs.y);
-    }
-
-    public static GridPos operator -(GridPos lhs, GridPos rhs)
-    {
-        return new GridPos(lhs.x - rhs.x, lhs.y - rhs.y);
-    }
-
-    public static GridPos operator -(GridPos v)
-    {
-        return new GridPos(-v.x, -v.y);
     }
 }

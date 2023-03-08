@@ -16,15 +16,6 @@ public class ObjectPool<T> where T : IPoolable
     private List<T> activePool = new List<T>();
     private List<T> inActivePool = new List<T>();
 
-    private T AddNewItemToPool()
-    {
-        //I think we use an activator because I can't create a new instance of T
-        //by using the "new" keyword. 
-        T instance = (T)Activator.CreateInstance(typeof(T));
-        inActivePool.Add(instance);
-        return instance;
-    }
-
     public T RequestItem()
     {
         if(inActivePool.Count > 0)
@@ -69,5 +60,12 @@ public class ObjectPool<T> where T : IPoolable
         inActivePool.Add(_item);
     }
 
-
+    private T AddNewItemToPool()
+    {
+        //I think we use an activator because I can't create a new instance of T
+        //by using the "new" keyword. 
+        T instance = (T)Activator.CreateInstance(typeof(T));
+        inActivePool.Add(instance);
+        return instance;
+    }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //base class for any visuals I want to add to the grid
-public class GridVisual : IPoolable, IPlaceable
+public class GridVisual : IPlaceable
 {
     public bool active { get; set; }
 

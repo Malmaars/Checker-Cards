@@ -45,7 +45,7 @@ public class Turn : Gamestate
 
     }
 
-    void MovePieces()
+    private void MovePieces()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -141,14 +141,14 @@ public class Turn : Gamestate
         }
     }
 
-    void Victory()
+    private void Victory()
     {
         //a player wins when the only pieces left on the board are of the player's color
         GridSystem.SetWinner(turnsPlaceableColor);
         victoryBool = true;
     }
 
-    void UsePotion() 
+    private void UsePotion() 
     {
         if (Input.GetMouseButtonDown(0))
         {

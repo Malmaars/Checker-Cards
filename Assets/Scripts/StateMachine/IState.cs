@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IState : IPoolable
+public interface IState
 {
     List<StateTransition> transitions { get; }
     void Enter();
