@@ -88,9 +88,9 @@ static class PotionManager
         return wallets[_color];
     }
 
-    public static void MakePotionAvailable(Potion newPotion)
+    public static void MakePotionAvailable(Potion _newPotion)
     {
-        currentlyAvaiablePotions.Add(newPotion);
+        currentlyAvaiablePotions.Add(_newPotion);
     }
 
     //arrange the position of the potions on screen
@@ -120,14 +120,14 @@ static class PotionManager
 
 
 
-    public static void UseEffect(GridPos pos, PlaceableColor _colorUsingIt)
+    public static void UseEffect(GridPos _pos, PlaceableColor _colorUsingIt)
     {
         //check if the tile is viable for the current potion
-        if (currentlySelectedPotion.AffectableTile(pos) && wallets[_colorUsingIt] >= 3)
+        if (currentlySelectedPotion.AffectableTile(_pos) && wallets[_colorUsingIt] >= 3)
         {
             UpdateWallet(_colorUsingIt, -3);
             //if it is viable, use its effect on the given tile
-            currentlySelectedPotion.Effect(pos);
+            currentlySelectedPotion.Effect(_pos);
 
             currentlySelectedPotion.RemovePotion();
             currentlyAvaiablePotions.Remove(currentlySelectedPotion);
